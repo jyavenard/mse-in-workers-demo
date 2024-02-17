@@ -1,8 +1,13 @@
 // Customize the demo media here:
-const MEDIA_URL = 'test-5seconds.webm';
-const MEDIA_TYPE = 'video/webm; codecs="vp9"';
+const MEDIA_LIST = {
+  'media-webm5' : { 'url': "test-5seconds.webm", 'type' : 'video/webm; codecs="vp9"' },
+  'media-webm10' : { 'url': "test-10seconds.webm", 'type' : 'video/webm; codecs="vp9,opus"' },
+  'media-mp410' : { 'url': "test-10seconds.mp4", 'type' : 'video/mp4; codecs="avc1.640028,mp4a.40.2"' }
+};
+
 const DEFAULT_APPEND_SIZE_CLASS_SELECTOR = '.append-512';
 const DEFAULT_BUSYWAIT_DURATION_CLASS_SELECTOR = '.busywait-800';
+const DEFAULT_MEDIA_TYPE_CLASS_SELECTOR = '.media-webm10';
 // End of demo customization.
 
 // See onload() for initialization of these element references.
@@ -10,6 +15,7 @@ let button;
 let main_div;
 let worker_div;
 let wait_div;
+let current_media;
 
 let wait_counter = 0;
 let wait_handle;
@@ -117,8 +123,8 @@ function startMseBufferingInWorker(log_div, video) {
     // MEDIA_URL and MEDIA_TYPE in the worker code, we provide it with
     // that info via an initial message.
     worker.postMessage({
-      media_url: MEDIA_URL,
-      media_type: MEDIA_TYPE,
+      media_url: getCurrentMediaUrl(),
+      media_type: getCurrentMediaMimeType(),
       append_size: configured_append_size
     });
 
@@ -158,7 +164,7 @@ function startMseBufferingInMain(log_div, video) {
 
     // Meanwhile, begin fetching and appending.
     whenSourceOpenedThenFetchAndAppendInChunks(
-        media_source, MEDIA_URL, MEDIA_TYPE, configured_append_size,
+        media_source, getCurrentMediaUrl(), getCurrentMediaMimeType(), configured_append_size,
         object_url /* sourceopen handler in utility script will revoke this url
                     */
         ,
@@ -294,6 +300,24 @@ function stopDemoPlayers() {
   updateButton('Start Demo', startBothDemoPlayers, 'white');
 }
 
+function checkType(e) {
+  current_media = this.className;
+  refreshMediaType(getCurrentMediaUrl(), getCurrentMediaMimeType());
+};
+
+function refreshMediaType(url, mimetype) {
+  document.querySelector('.media-url').innerText = url;
+  document.querySelector('.media-type').innerText = mimetype;
+}
+
+function getCurrentMediaUrl() {
+  return MEDIA_LIST[current_media].url;
+}
+
+function getCurrentMediaMimeType() {
+  return MEDIA_LIST[current_media].type;
+}
+
 function updateButton(label, onclick, color) {
   button.innerText = label;
   button.onclick = onclick;
@@ -301,11 +325,12 @@ function updateButton(label, onclick, color) {
 }
 
 function populateParametersTable() {
-  document.querySelector('.media-url').innerText = MEDIA_URL;
-  document.querySelector('.media-type').innerText = MEDIA_TYPE;
-
   document.querySelector(DEFAULT_APPEND_SIZE_CLASS_SELECTOR).checked = true;
   document.querySelector(DEFAULT_BUSYWAIT_DURATION_CLASS_SELECTOR).checked = true;
+  const media_type = document.querySelector(DEFAULT_MEDIA_TYPE_CLASS_SELECTOR);
+  media_type.checked = true;
+  current_media = media_type.className;
+  refreshMediaType(getCurrentMediaUrl(), getCurrentMediaMimeType());
 }
 
 function checkIfMseInWorkerSupported() {
@@ -324,6 +349,11 @@ window.onload = () => {
   main_div = document.querySelector('div.main .player');
   worker_div = document.querySelector('div.worker .player');
   wait_div = document.querySelector('.top');
+  var inputs = document.getElementsByTagName("input");
+  for (const node of inputs) {
+    if (node.name == "media-type")
+      node.onclick=checkType.bind(node);
+  };
   populateParametersTable();
   updateButton('Start Demo', startBothDemoPlayers, 'white');
   wait_div.innerText = 'Awaiting Start';
