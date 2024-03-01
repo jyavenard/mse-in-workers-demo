@@ -2,6 +2,8 @@
 // the demo's video elements, so makes no reliance upon DOM since it could
 // be used by either main window context or dedicated worker.
 
+const MediaSource = self.ManagedMediaSource || self.MediaSource;
+
 function loadBinaryAsync(url) {
   return new Promise((resolve, reject) => {
     let request = new XMLHttpRequest();

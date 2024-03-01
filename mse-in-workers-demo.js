@@ -180,6 +180,8 @@ function startDemoPlayer(div, use_worker) {
   const video = document.createElement('video');
   video.style.width = '100%';
   video.controls = true;
+  video.muted = true;
+  video.playsInline = true;
   div.appendChild(video);
   video.load();
 
@@ -200,14 +202,14 @@ function startDemoPlayer(div, use_worker) {
     return;
   }
 
-  if (window.MediaSource == undefined) {
+  if (MediaSource == undefined) {
     log(log_div,
         'Error: MediaSource API is unavailable from main/Window context.');
     decrementPendingEnded();
     return;
   }
 
-  if (use_worker && (!MediaSource.hasOwnProperty('canConstructInDedicatedWorker') ||
+  if (use_worker && ((!"canConstructInDedicatedWorker" in MediaSource) ||
                      MediaSource.canConstructInDedicatedWorker !== true)) {
     log(log_div,
         'Error: MediaSource API is unavailable from DedicatedWorker context.');
