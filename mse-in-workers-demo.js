@@ -182,6 +182,7 @@ function startDemoPlayer(div, use_worker) {
   video.controls = true;
   video.muted = true;
   video.playsInline = true;
+  video.disableRemotePlayback = true;
   div.appendChild(video);
   video.load();
 
