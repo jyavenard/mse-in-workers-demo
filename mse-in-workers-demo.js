@@ -6,7 +6,7 @@ const MEDIA_LIST = {
 };
 
 const DEFAULT_APPEND_SIZE_CLASS_SELECTOR = '.append-512';
-const DEFAULT_BUSYWAIT_DURATION_CLASS_SELECTOR = '.busywait-800';
+const DEFAULT_BUSYWAIT_DURATION_CLASS_SELECTOR = '.busywait-400';
 const DEFAULT_MEDIA_TYPE_CLASS_SELECTOR = '.media-webm10';
 // End of demo customization.
 
@@ -267,7 +267,7 @@ function startBothDemoPlayers() {
   updateConfiguredAppendSize();
   updateConfiguredBusywaitDuration();
 
-  startDemoPlayer(main_div, false /* don't use_worker */);
+  // startDemoPlayer(main_div, false /* don't use_worker */);
   startDemoPlayer(worker_div, true /* do use_worker */);
   updateButton('Stop', stopDemoPlayers, 'white');
 }
