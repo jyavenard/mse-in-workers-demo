@@ -267,7 +267,7 @@ function startBothDemoPlayers() {
   updateConfiguredAppendSize();
   updateConfiguredBusywaitDuration();
 
-  // startDemoPlayer(main_div, false /* don't use_worker */);
+  startDemoPlayer(main_div, false /* don't use_worker */);
   startDemoPlayer(worker_div, true /* do use_worker */);
   updateButton('Stop', stopDemoPlayers, 'white');
 }
